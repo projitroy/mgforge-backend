@@ -1,0 +1,81 @@
+"""
+Single-file schema for:
+-multi-tenant coaching platform
+-roles: SUPERADMIN > TENANT_ADMIN > ADMIN > COACH > USER
+-plans,progress, comments
+-pagination via connection model
+"""
+
+#--------------
+#Scalers
+#--------------
+scalar DateTime
+scalar JSON
+scalar URL
+
+#--------------
+#RBAC/Common
+#--------------
+enum Role {SUPERADMIN TENANT_ADMIN ADMIN COACH USER}
+enum SortDirection {ASC DESC}
+
+interface Node {id:ID!}
+
+type  PageInfo {
+    hasNextPage: Boolean!
+    endCursor: String
+}
+
+input PageInput {
+    first: Int = 20
+    after: String
+}
+
+#--------------
+#Auth/Session
+#--------------
+type AuthContext {
+    tenantId: ID
+    roles: [Role!]!
+}
+
+#--------------
+#Tenant
+#--------------
+type Tenant implements Node {
+    id: ID!
+    slug: String!
+    name: String!
+    createdAt: DateTime!
+}
+
+type TenantEdge {cursor: String! node: Tenant!}
+type TenantConnection{
+    edges: [TenantEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+input CreateTenantInput {
+    slug: String!
+    name: String!
+}
+
+#--------------
+#Users
+#--------------
+
+enum UserStatus {ACTIVE DISABLED INVITED}
+
+type User implements Node {
+    id:ID!
+    tenantId:ID!
+    email:String!
+    name:String
+    pictureUrl:URL
+    roles:[Role!]!
+    status: UserStatus
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    preferences:JSON
+}

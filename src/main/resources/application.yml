@@ -10,11 +10,18 @@ spring:
 
   graphql:
     schema:
-      locations: classpath:graphql/**/
+      locations: classpath:graphql/**
       file-extensions: .graphqls,.gqls
+    path: /graphql
     graphiql:
       enabled: true
       path: /graphiql
 
   datasource:
     url: ${DB_URL}
+
+app:
+  jwt:
+    issuer: "platform-api"
+    secret-base64: ${JWT_SECRET_BASE64:CHANGE_ME}
+    access-token-minutes: ${JWT_ACCESS_MIN}
