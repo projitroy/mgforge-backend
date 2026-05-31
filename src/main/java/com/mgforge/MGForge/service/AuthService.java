@@ -2,6 +2,9 @@ package com.mgforge.MGForge.service;
 
 import com.mgforge.MGForge.auth.JwtService;
 import com.mgforge.MGForge.entity.UserEntity;
+import com.mgforge.MGForge.exception.AccountDisabledException;
+import com.mgforge.MGForge.exception.AdminPortalAccessDeniedException;
+import com.mgforge.MGForge.exception.InvalidCredentialsException;
 import com.mgforge.MGForge.repository.UserRepository;
 import com.mgforge.MGForge.repository.UserRoleRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,14 +30,14 @@ public class AuthService {
 
     public Map<String,String> login(String mobile, String password, boolean adminPortal){
         UserEntity user = userRepository.findByMobile(mobile)
-                .orElseThrow(()->new RuntimeException("Invalid Credentials"));
+                .orElseThrow(()->new InvalidCredentialsException("Invalid Credentials"));
 
         if(!"ACTIVE".equals(user.getStatus())){
-            throw new RuntimeException("User account is disabled");
+            throw new AccountDisabledException("User account is disabled");
         }
 
         if(!passwordEncoder.matches(password, user.getPasswordHash())){
-            throw new RuntimeException("Invalid Credentials");
+            throw new InvalidCredentialsException("Invalid Credentials");
         }
 
         List<String> roles = userRoleRepository.findRolesByUserId(user.getId());
@@ -52,7 +55,7 @@ public class AuthService {
             );
 
             if(!allowed){
-                throw new RuntimeException("Not allowed to access admin portal");
+                throw new AdminPortalAccessDeniedException("Not allowed to access admin portal");
             }
         }
 
