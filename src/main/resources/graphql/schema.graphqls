@@ -12,7 +12,6 @@ Single-file schema for:
 scalar DateTime
 scalar JSON
 scalar URL
-
 #--------------
 #RBAC/Common
 #--------------
@@ -70,12 +69,50 @@ enum UserStatus {ACTIVE DISABLED INVITED}
 type User implements Node {
     id:ID!
     tenantId:ID!
-    email:String!
+    email:String
     name:String
-    pictureUrl:URL
+    mobile:String!
+    firstLogin:Boolean
+    pictureUrl:String
     roles:[Role!]!
     status: UserStatus
     createdAt: DateTime!
     updatedAt: DateTime!
     preferences:JSON
+}
+
+type UserEdge {
+    cursor: String!
+    node: User!
+}
+
+type UserConnection {
+    edges: [UserEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+input CreateUserInput {
+    mobile: String!
+    name: String
+    password: String
+    roles: [Role!]!
+}
+
+type Query {
+    # -------- session ------ #
+    me: User!
+    authContext: AuthContext!
+
+    # -------- tenant ------- #
+    currentTenant: Tenant!
+
+    # SUPERADMIN cross-tenant
+    tenants(page: PageInput): TenantConnection!
+    userByTenant(tenantId: ID!, page:PageInput, search: String): UserConnection!
+}
+
+type Mutation {
+    createTenant(input: CreateTenantInput): Tenant!
+    createUser(input: CreateUserInput!): User!
 }

@@ -7,14 +7,25 @@ spring:
     name: platform-api
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
+  config:
+    import: optional:file:.env[.properties]
 
   graphql:
     schema:
-      locations: classpath:graphql/**/
+      locations: classpath:graphql/**
       file-extensions: .graphqls,.gqls
+    path: /graphql
     graphiql:
       enabled: true
       path: /graphiql
 
   datasource:
     url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+app:
+  jwt:
+    issuer: "platform-api"
+    secret-base64: ${JWT_SECRET_BASE64}
+    access-token-minutes: ${JWT_ACCESS_MIN}

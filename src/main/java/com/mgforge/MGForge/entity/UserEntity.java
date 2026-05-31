@@ -1,9 +1,6 @@
 package com.mgforge.MGForge.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -14,4 +11,66 @@ public class UserEntity {
     @GeneratedValue
     private UUID id;
 
+    @Column(name = "tenant_id" ,  nullable = false)
+    private UUID tenantId;
+
+    @Column(nullable = false)
+    private String mobile;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(name = "password" , nullable = false)
+    private String passwordHash;
+
+    @Column(nullable = false)
+    private String status;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(UUID tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 }

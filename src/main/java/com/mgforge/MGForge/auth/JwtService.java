@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +14,20 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Service
 public class JwtService {
     private final SecretKey key;
     private final String issuer;
     private final long accessMinutes;
+    // private static final Logger logger = (Logger) LoggerFactory.getLogger(JwtService.class);
+
 
     public JwtService(@Value("${app.jwt.secret-base64}") String secretBase64,
                       @Value("${app.jwt.issuer}") String issuer,
-                      @Value("${app.jwt.access-token-minutes") long accessMinutes){
+                      @Value("${app.jwt.access-token-minutes}") long accessMinutes){
+        //logger.info("------data-------------"+secretBase64+"==="+accessMinutes);
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretBase64));
         this.issuer = issuer;
         this.accessMinutes = accessMinutes;
