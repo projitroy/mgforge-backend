@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -48,10 +49,10 @@ public class AuthService {
 
         if (adminPortal) {
             boolean allowed = roles.stream().anyMatch(r->
-                    r.equals("SUPERADMIN") ||
-                    r.equals("TENANT_ADMIN") ||
-                    r.equals("ADMIN") ||
-                    r.equals("COACH")
+                    r.equals("1") ||
+                    r.equals("2") ||
+                    r.equals("3") ||
+                    r.equals("4")
             );
 
             if(!allowed){
@@ -65,6 +66,6 @@ public class AuthService {
                 roles
         );
 
-        return Map.of("accessToken",accessToken);
+        return Map.of("accessToken",accessToken,"roles",String.join(",",roles));
     }
 }

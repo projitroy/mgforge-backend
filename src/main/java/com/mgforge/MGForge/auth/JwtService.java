@@ -46,7 +46,7 @@ public class JwtService {
                         "tid",tenantId,
                         "roles",roles
                 ))
-                .signWith(key, SignatureAlgorithm.ES256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 

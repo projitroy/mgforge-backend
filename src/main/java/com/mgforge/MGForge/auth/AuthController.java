@@ -21,14 +21,14 @@ public class AuthController {
     @PostMapping("/auth/login")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> loginUser(@RequestBody LoginRequest req){
-        return authService.login(req.email(),req.password(),false);
+        return authService.login(req.mobile(),req.password(),false);
     }
 
     @PostMapping("/admin/auth/login")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> loginAdmin(@RequestBody LoginRequest req) {
-        return authService.login(req.email(), req.password(), true);
+        return authService.login(req.mobile(), req.password(), true);
     }
 
-    public record LoginRequest(String email,String password) {}
+    public record LoginRequest(String mobile, String password) {}
 }

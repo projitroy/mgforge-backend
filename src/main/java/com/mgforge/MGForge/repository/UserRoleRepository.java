@@ -12,5 +12,5 @@ import java.util.UUID;
 public interface UserRoleRepository extends JpaRepository<UserRoleEntity, UserRoleId> {
 
     @Query("select r.roleId from UserRoleEntity r where r.userId = :userId")
-    List<String> findRolesByUserId(@Param("userid")UUID userId);
+    List<String> findRolesByUserId(@Param("userId")UUID userId);
 }
