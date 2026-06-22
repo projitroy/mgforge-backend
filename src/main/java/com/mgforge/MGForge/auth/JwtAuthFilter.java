@@ -1,5 +1,6 @@
 package com.mgforge.MGForge.auth;
 
+import com.mgforge.MGForge.security.AppPrincipal;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,7 +44,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             Claims claims = jwtService.parseClaims(token);
-            String userId = claims.getSubject();
+            UUID userId = UUID.fromString(claims.getSubject());
+
+            Object tidObj = claims.get("tid");
+            UUID tenantId = (tidObj == null) ? null : UUID.fromString(tidObj.toString());
 
             @SuppressWarnings("unchecked")
             List<String> roles = (List<String>) claims.get("roles");
@@ -51,13 +56,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .map(r -> new SimpleGrantedAuthority("ROLE_"+r))
                     .collect(Collectors.toList());
 
-            var authentication = new UsernamePasswordAuthenticationToken(userId,null,authorities);
+            AppPrincipal principal = new AppPrincipal(userId,tenantId,roles);
+
+            var authentication = new UsernamePasswordAuthenticationToken(principal,null,authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             chain.doFilter(request,response);
         } catch (Exception ex){
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid or expired token");
         }
     }
 }
