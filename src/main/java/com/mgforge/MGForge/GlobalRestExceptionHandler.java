@@ -1,8 +1,6 @@
 package com.mgforge.MGForge;
 
-import com.mgforge.MGForge.exception.AccountDisabledException;
-import com.mgforge.MGForge.exception.AdminPortalAccessDeniedException;
-import com.mgforge.MGForge.exception.InvalidCredentialsException;
+import com.mgforge.MGForge.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +45,34 @@ public class GlobalRestExceptionHandler {
     ){
         ErrorResponse body = new ErrorResponse(
                 "ADMIN_PORTAL_ACCESS_DENIED",
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(
+            ResourceNotFoundException ex,
+            HttpServletRequest request
+    ){
+        ErrorResponse body = new ErrorResponse(
+                "NOT_FOUND",
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(
+            BadRequestException ex,
+            HttpServletRequest request
+    ){
+        ErrorResponse body = new ErrorResponse(
+                "BAD_REQUEST",
                 ex.getMessage(),
                 HttpStatus.FORBIDDEN.value(),
                 request.getRequestURI()
