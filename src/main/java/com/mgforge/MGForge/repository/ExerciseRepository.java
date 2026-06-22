@@ -1,4 +1,11 @@
 package com.mgforge.MGForge.repository;
 
-public interface ExerciseRepository {
+import com.mgforge.MGForge.entity.ExerciseEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface ExerciseRepository extends JpaRepository<ExerciseEntity, UUID> {
+    List<ExerciseEntity> findAllByTenantId(UUID tenantId);
 }
