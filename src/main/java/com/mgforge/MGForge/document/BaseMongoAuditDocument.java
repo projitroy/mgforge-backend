@@ -1,4 +1,4 @@
-package com.mgforge.MGForge.entity;
+package com.mgforge.MGForge.document;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
