@@ -1,4 +1,9 @@
 package com.mgforge.MGForge.enums;
 
-public class RoleType {
+public enum RoleType {
+    SUPERADMIN,
+    TENANT_ADMIN,
+    ADMIN,
+    COACH,
+    USER
 }

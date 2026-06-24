@@ -28,7 +28,7 @@ public class ExerciseMediaEntity extends BaseAuditEntity {
     private String thumbnailUrl;
 
     @Column(name = "duration_seconds")
-    private MediaType durationSeconds;
+    private Integer durationSeconds;
 
     @Column(length = 100)
     private String provider;
@@ -39,7 +39,7 @@ public class ExerciseMediaEntity extends BaseAuditEntity {
     public ExerciseMediaEntity() {
     }
 
-    public ExerciseMediaEntity(UUID id, UUID tenantId, UUID exerciseId, MediaType mediaType, String thumbnailUrl, MediaType durationSeconds, String provider, Integer sortOrder) {
+    public ExerciseMediaEntity(UUID id, UUID tenantId, UUID exerciseId, MediaType mediaType, String thumbnailUrl, Integer durationSeconds, String provider, Integer sortOrder) {
         this.id = id;
         this.tenantId = tenantId;
         this.exerciseId = exerciseId;
@@ -90,11 +90,11 @@ public class ExerciseMediaEntity extends BaseAuditEntity {
         this.thumbnailUrl = thumbnailUrl;
     }
 
-    public MediaType getDurationSeconds() {
+    public Integer getDurationSeconds() {
         return durationSeconds;
     }
 
-    public void setDurationSeconds(MediaType durationSeconds) {
+    public void setDurationSeconds(Integer durationSeconds) {
         this.durationSeconds = durationSeconds;
     }
 

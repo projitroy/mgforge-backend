@@ -45,7 +45,9 @@ type Tenant implements Node {
     id: ID!
     slug: String!
     name: String!
+    status: String!
     createdAt: DateTime!
+    updatedAt: DateTime!
 }
 
 type TenantEdge {cursor: String! node: Tenant!}
@@ -92,11 +94,167 @@ type UserConnection {
     totalCount: Int!
 }
 
+type Exercise {
+    id: ID!
+    tenantId: ID!
+    name: String!
+    description: String
+    primaryMuscle: String
+    equipment: String
+    difficulty: String
+    isActive: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type ExerciseMedia {
+    id: ID!
+    tenantId: ID!
+    exerciseId: ID!
+    mediaType: String!
+    url: String!
+    thumbnailUrl: String
+    durationSeconds: Int
+    provider: String
+    sortOrder: Int!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type WorkoutPlanInstance {
+    id: ID!
+    tenantId: ID!
+    clientId: ID!
+    assignedById: ID!
+    templateId: ID
+    status: String!
+    startDate: String
+    endDate: String
+    mongoDefinitionId: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type PlanSourceInfo{
+    type: String
+    templateId: String
+    templateVersion: Int
+}
+
+type PlanDefinition {
+    id: ID!
+    tenantId: String
+    source: PlanSourceInfo
+    name: String
+    weeks: JSON
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type WorkoutLog {
+    id: ID!
+    tenantId: String
+    clientId: String
+    coachId: String
+    planInstanceId: String
+    weekNumber: Int
+    dayNumber: Int
+    completedAt: DateTime
+    entries: JSON
+    clientNotes: String
+    coachCommentIds: [String]
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Comment{
+    id: ID!
+    tenantId: String
+    targetType: String
+    targetId: String
+    authorId: String
+    message: String
+    visibility: String
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
 input CreateUserInput {
     mobile: String!
     name: String
-    password: String
+    rawPassword: String!
     roles: [Role!]!
+}
+
+input UpdateUserInput {
+    name: String
+    pictureUrl: String
+    status: String
+}
+
+input AssignRolesInput {
+    userId: ID!
+    roles: [String!]!
+}
+
+input CreateExerciseMediaInput {
+    mediaType: String!
+    url: String!
+    thumbnailUrl: String
+    durationSeconds: Int
+    provider: String
+    sortOrder: Int
+}
+
+input CreateExerciseInput{
+    name: String!
+    description: String
+    primaryMuscle: String
+    equipment: String
+    difficulty: String
+    media: [CreateExerciseMediaInput!]
+}
+
+input CreatePersonalPlanInput{
+    clientId: ID!
+    startDate: String
+    endDate: String
+    program: JSON
+}
+
+input CreateWorkoutLogInput{
+    planInstanceId: ID!
+    weekNumber: Int!
+    dayNumber: Int!
+    completedAt: DateTime!
+    entries: JSON
+    clientNotes: String
+}
+
+input CreateCommentInput {
+    targetType: String!
+    targetId: ID!
+    message: String!
+    visibility: String!
+}
+
+input CreateTrainingPlanInput {
+    clientId: ID!
+    title: String!
+    description: String
+    status: String
+    startDate: String
+    endDate: String
+    program: JSON
+}
+
+input UpdateTrainingPlanInput{
+    title: String
+    description: String
+    status: String
+    startDate: String
+    endDate: String
+    program: JSON
 }
 
 type Query {
@@ -106,13 +264,26 @@ type Query {
 
     # -------- tenant ------- #
     currentTenant: Tenant!
-
+    tenants: [Tenant!]!
+    tenantUsers: [User!]!
     # SUPERADMIN cross-tenant
-    tenants(page: PageInput): TenantConnection!
-    userByTenant(tenantId: ID!, page:PageInput, search: String): UserConnection!
+    userByTenant(tenantId: ID!): [User!]!
+    tenantExercises: [Exercise!]!
+    exerciseMedia(exerciseId: ID!): [ExerciseMedia!]!
+    myPlanInstance(status: String): [WorkoutPlanInstance!]!
+    planDefinitionByInstance(planInstanceId: ID!): PlanDefinition!
+    workoutLogsByClient(clientId: ID!): [WorkoutLog!]!
+    comments(targetType: String!, targetId: ID!): [Comment!]!
 }
 
 type Mutation {
-    createTenant(input: CreateTenantInput): Tenant!
+#    createTenant(input: CreateTenantInput): Tenant!
     createUser(input: CreateUserInput!): User!
+    updateUser(userId: ID!,input: UpdateUserInput): User!
+    assignRoles(input: AssignRolesInput): User!
+    createExercise(input: CreateExerciseInput): Exercise!
+    createTrainingPlan(input: CreateTrainingPlanInput!): WorkoutPlanInstance!
+    updateTrainingPlan(planInstanceId: ID!, input: UpdateTrainingPlanInput): WorkoutPlanInstance
+    createWorkoutLog(input: CreateWorkoutLogInput!): WorkoutLog!
+    createComment(input: CreateCommentInput!): Comment!
 }

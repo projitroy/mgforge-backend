@@ -1,5 +1,6 @@
 package com.mgforge.MGForge.entity;
 
+import com.mgforge.MGForge.enums.UserStatus;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class UserEntity {
     private String passwordHash;
 
     @Column(nullable = false)
-    private String status;
+    private UserStatus status;
 
     public UUID getId() {
         return id;
@@ -58,11 +59,11 @@ public class UserEntity {
         this.passwordHash = passwordHash;
     }
 
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(UserStatus status) {
         this.status = status;
     }
 

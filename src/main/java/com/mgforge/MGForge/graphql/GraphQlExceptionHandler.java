@@ -1,5 +1,7 @@
 package com.mgforge.MGForge.graphql;
 
+import com.mgforge.MGForge.exception.BadRequestException;
+import com.mgforge.MGForge.exception.ResourceNotFoundException;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
@@ -19,6 +21,20 @@ public class GraphQlExceptionHandler  extends DataFetcherExceptionResolverAdapte
             return GraphqlErrorBuilder.newError(env)
                     .message(ex.getMessage())
                     .errorType(ErrorType.FORBIDDEN)
+                    .build();
+        }
+
+        if(ex instanceof ResourceNotFoundException){
+            return GraphqlErrorBuilder.newError(env)
+                    .message(ex.getMessage())
+                    .errorType(ErrorType.NOT_FOUND)
+                    .build();
+        }
+
+        if(ex instanceof BadRequestException){
+            return GraphqlErrorBuilder.newError(env)
+                    .message(ex.getMessage())
+                    .errorType(ErrorType.BAD_REQUEST)
                     .build();
         }
 

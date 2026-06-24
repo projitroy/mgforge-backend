@@ -29,8 +29,10 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	// Persistence (JPA) - if your users are stored in DB
+	// Persistence (JPA) - if your users are stored in DB and MongoDB
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// for graphQL
 	implementation 'org.springframework.boot:spring-boot-starter-graphql'

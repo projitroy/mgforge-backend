@@ -1,5 +1,6 @@
 package com.mgforge.MGForge.graphql;
 
+import com.mgforge.MGForge.dto.AuthContextDto;
 import com.mgforge.MGForge.entity.UserEntity;
 import com.mgforge.MGForge.service.UserSelfService;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -17,5 +18,10 @@ public class UserGraphqlController {
     @QueryMapping
     public UserEntity me(){
         return userSelfService.me();
+    }
+
+    @QueryMapping
+    public AuthContextDto authContext(){
+        return userSelfService.authContext();
     }
 }

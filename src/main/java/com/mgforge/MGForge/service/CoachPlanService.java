@@ -3,8 +3,11 @@ package com.mgforge.MGForge.service;
 import com.mgforge.MGForge.document.PlanDefinitionDocument;
 import com.mgforge.MGForge.dto.CreateTrainingPlanInput;
 import com.mgforge.MGForge.dto.UpdateTrainingPlanInput;
+import com.mgforge.MGForge.entity.CoachClientLinkEntity;
 import com.mgforge.MGForge.entity.WorkoutPlanInstanceEntity;
 import com.mgforge.MGForge.enums.AssignmentStatus;
+import com.mgforge.MGForge.exception.ResourceNotFoundException;
+import com.mgforge.MGForge.repository.CoachClientLinkRepository;
 import com.mgforge.MGForge.repository.PlanDefinitionRepository;
 import com.mgforge.MGForge.repository.WorkoutPlanInstanceRepository;
 import com.mgforge.MGForge.security.AppPrincipal;
@@ -21,14 +24,16 @@ public class CoachPlanService {
 
     private final WorkoutPlanInstanceRepository workoutPlanInstanceRepository;
     private final PlanDefinitionRepository planDefinitionRepository;
+    private final CoachClientLinkRepository coachClientLinkRepository;
 
-    public CoachPlanService(WorkoutPlanInstanceRepository workoutPlanInstanceRepository, PlanDefinitionRepository planDefinitionRepository) {
+    public CoachPlanService(WorkoutPlanInstanceRepository workoutPlanInstanceRepository, PlanDefinitionRepository planDefinitionRepository, CoachClientLinkRepository coachClientLinkRepository) {
         this.workoutPlanInstanceRepository = workoutPlanInstanceRepository;
         this.planDefinitionRepository = planDefinitionRepository;
+        this.coachClientLinkRepository = coachClientLinkRepository;
     }
 
     @PreAuthorize("hasAnyRole('COACH','TENANT_ADMIN','ADMIN','SUPERADMIN') and @rbac.canAccessClient(T(java.util.UUID).fromString(#input.clientId))")
-    public WorkoutPlanInstanceEntity createPersonalPlan(CreateTrainingPlanInput input){
+    public WorkoutPlanInstanceEntity createTrainingPlan(CreateTrainingPlanInput input){
         AppPrincipal principal = SecurityUtils.currentPrincipal();
 
         PlanDefinitionDocument planDefinition = new PlanDefinitionDocument();
@@ -90,5 +95,34 @@ public class CoachPlanService {
                 principal.getUserId(),
                 AssignmentStatus.valueOf(status)
         );
+    }
+
+    /**
+     * Load Mongo plan structure by CockroachDB plan instance
+     */
+    @PreAuthorize(("hasRole('SUPERADMIN' or @rbac.canAccessPlanInstance(#planInstanceId)"))
+    public PlanDefinitionDocument planDefinitionByInstance(UUID planInstanceId){
+        WorkoutPlanInstanceEntity instance = workoutPlanInstanceRepository.findById(planInstanceId)
+                .orElseThrow(()-> new ResourceNotFoundException("Plan instance not found"));
+
+        return planDefinitionRepository.findById(instance.getMongoDefinitionId())
+                .orElseThrow(()-> new ResourceNotFoundException("Plan definition not found"));
+    }
+
+    /**
+     * Coach-specific helper to list their assigned client IDS
+     */
+    @PreAuthorize("hasRole('COACH')")
+    public List<UUID> myClientIds(){
+        AppPrincipal principal = SecurityUtils.currentPrincipal();
+
+        List<CoachClientLinkEntity> links = coachClientLinkRepository.findAllByTenantAndCoachIdAndActiveTrue(
+                principal.getTenantId(),
+                principal.getUserId()
+        );
+
+        return links.stream()
+                .map(CoachClientLinkEntity::getClientId)
+                .toList();
     }
 }

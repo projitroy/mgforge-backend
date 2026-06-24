@@ -22,7 +22,7 @@ public class CommentService {
     }
 
     @PreAuthorize("hasAnyRole('COACH','TENANT_ADMIN','ADMIN','SUPERADMIN')")
-    public CommentDocument createDocument(CreateCommentInput input){
+    public CommentDocument createComment(CreateCommentInput input){
         AppPrincipal principal = SecurityUtils.currentPrincipal();
 
         CommentDocument document = new CommentDocument();

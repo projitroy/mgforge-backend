@@ -1,4 +1,8 @@
 package com.mgforge.MGForge.enums;
 
-public enum AssignementStatus {
+public enum AssignmentStatus {
+    ACTIVE,
+    COMPLETED,
+    PAUSED,
+    CANCELLED
 }
