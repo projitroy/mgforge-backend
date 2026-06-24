@@ -10,6 +10,10 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+#  data:
+#    mongodb:
+#      uri:
+
   graphql:
     schema:
       locations: classpath:graphql/**
@@ -25,13 +29,19 @@ spring:
     password: ${DB_PASSWORD}
 
   jpa:
+    hibernate:
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 
 logging:
   level:
+    root: INFO
+    com.mgforge.MGForge: DEBUG
     org.hibernate.orm.jdbc.bind: trace
 
 app:

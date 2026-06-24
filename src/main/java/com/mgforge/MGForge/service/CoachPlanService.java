@@ -116,7 +116,7 @@ public class CoachPlanService {
     public List<UUID> myClientIds(){
         AppPrincipal principal = SecurityUtils.currentPrincipal();
 
-        List<CoachClientLinkEntity> links = coachClientLinkRepository.findAllByTenantAndCoachIdAndActiveTrue(
+        List<CoachClientLinkEntity> links = coachClientLinkRepository.findAllByTenantIdAndCoachIdAndActiveTrue(
                 principal.getTenantId(),
                 principal.getUserId()
         );

@@ -96,7 +96,7 @@ public class AdminUserService {
         UserEntity user = userRepository.findById(input.getUserId())
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
-        userRoleRepository.deletedBuyUserId(user.getId());
+        userRoleRepository.deleteByUserId(user.getId());
 
         if(input.getRoles() != null) {
             for (String role : input.getRoles()){

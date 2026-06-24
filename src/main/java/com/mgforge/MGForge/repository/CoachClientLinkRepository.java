@@ -13,5 +13,5 @@ public interface CoachClientLinkRepository extends JpaRepository<CoachClientLink
             UUID coachId,
             UUID clientId
     );
-    List<CoachClientLinkEntity> findAllByTenantAndCoachIdAndActiveTrue(UUID tenantId,UUID coachId);
+    List<CoachClientLinkEntity> findAllByTenantIdAndCoachIdAndActiveTrue(UUID tenantId, UUID coachId);
 }

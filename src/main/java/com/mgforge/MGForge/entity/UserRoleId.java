@@ -1,16 +1,18 @@
 package com.mgforge.MGForge.entity;
 
+import com.mgforge.MGForge.enums.RoleType;
+
 import java.util.Objects;
 import java.util.UUID;
 
 public class UserRoleId {
 
     private UUID userId;
-    private String roleId;
+    private RoleType roleId;
 
     public UserRoleId(){}
 
-    public UserRoleId(UUID userId, String roleId) {
+    public UserRoleId(UUID userId, RoleType roleId) {
         this.userId = userId;
         this.roleId = roleId;
     }
@@ -23,11 +25,11 @@ public class UserRoleId {
         this.userId = userId;
     }
 
-    public String getRoleId() {
+    public RoleType getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(RoleType roleId) {
         this.roleId = roleId;
     }
 

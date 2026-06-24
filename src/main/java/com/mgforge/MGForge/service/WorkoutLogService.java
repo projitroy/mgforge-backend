@@ -50,7 +50,7 @@ public class WorkoutLogService {
     @PreAuthorize("hasRole('SUPERADMIN') or @rbac.canAccessClient(T(java.util.UUID).fromString(#clientId))")
     public List<WorkoutLogDocument> workoutLogsByClient(String clientId){
         AppPrincipal principal = SecurityUtils.currentPrincipal();
-        return workoutLogRepository.findAllByTenantAndClientOrderByCompletedAtDesc(
+        return workoutLogRepository.findAllByTenantIdAndClientIdOrderByCompletedAtDesc(
                 principal.getTenantId().toString(),
                 clientId
         );

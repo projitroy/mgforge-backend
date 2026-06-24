@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface WorkoutLogRepository extends MongoRepository<WorkoutLogDocument, String> {
 
-    List<WorkoutLogDocument> findAllByTenantAndClientOrderByCompletedAtDesc(String tenantId, String clientId);
+    List<WorkoutLogDocument> findAllByTenantIdAndClientIdOrderByCompletedAtDesc(String tenantId, String clientId);
 
     List<WorkoutLogDocument> findAllByTenantIdAndPlanInstanceIdOrderByCompletedAtDesc(String tenantId, String planInstanceId);
 }
