@@ -24,6 +24,7 @@ public class UserEntity {
     @Column(name = "password" , nullable = false)
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
 

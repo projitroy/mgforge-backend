@@ -4,8 +4,10 @@ import com.mgforge.MGForge.security.AppPrincipal;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,18 +32,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request){
         String path = request.getServletPath();
-        return path.equals("/auth/login") || path.equals("/admin/auth/login") || path.equals("/graphql");
+        return path.equals("/auth/login")
+                || path.equals("/admin/auth/login")
+                || path.equals("/auth/refresh")
+                || path.equals("/graphql");
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String auth = request.getHeader("Authorization");
-        if(auth == null || !auth.startsWith("Bearer ")){
-            chain.doFilter(request,response);
-            return;
-        }
-
-        String token = auth.substring("Bearer ".length());
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException, IOException {
+        String token = resolveToken(request);
 
         try {
             Claims claims = jwtService.parseClaims(token);
@@ -67,5 +67,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid or expired token");
         }
+    }
+
+    private String resolveToken(HttpServletRequest request){
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader != null && authHeader.startsWith("Bearer ")){
+            return authHeader.substring("Bearer ".length());
+        }
+
+        if(request.getCookies()!=null){
+            Cookie accessCookie = Arrays.stream(request.getCookies())
+                    .filter(c-> "access_token".equals(c.getName()))
+                    .findFirst()
+                    .orElse(null);
+
+            if(accessCookie != null){
+                return accessCookie.getValue();
+            }
+        }
+
+        return null;
     }
 }
